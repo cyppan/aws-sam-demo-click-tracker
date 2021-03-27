@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Click tracker
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicRead
+      BucketName: cyppan-my-click-website
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  TrackerFunction:
+    Type: AWS::Serverless::Function # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: tracker/
+      Handler: index.handler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Environment:
+        Variables:
+          QUEUE_URL: !Ref EventsQueue
+      Events:
+        Tracker:
+          Type: HttpApi # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          CorsConfiguration: true
+          Properties:
+            Path: /track
+            Method: POST
+      Policies: # https://github.com/aws/serverless-application-model/blob/master/docs/policy_templates.rst
+        SQSSendMessagePolicy:
+          QueueName: !GetAtt EventsQueue.QueueName
+
+  EventsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      DelaySeconds: 10
+      MessageRetentionPeriod: 3600
+
+    # This is the Lambda function definition associated with the source code: sqs-payload-logger.js. For all available properties, see
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  StorerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: storer/
+      Handler: index.handler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Events:
+        SQSQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt EventsQueue.Arn
+      Policies:
+        - ElasticsearchHttpPostPolicy:
+            DomainName: events
+
+Outputs:
+  WebsiteURL: # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#aws-properties-s3-bucket--examples
+    Value: !GetAtt
+      - S3Bucket
+      - WebsiteURL
+    Description: URL for website hosted on S3
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  TrackerApi:
+    Description: "API Gateway endpoint URL for the Tracker function"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/track/"
+  
