@@ -58,7 +58,8 @@ Resources:
           Type: SQS
           Properties:
             Queue: !GetAtt EventsQueue.Arn
-      Policies:
+      Policies: # https://github.com/aws/serverless-application-model/blob/master/docs/policy_templates.rst
+        # AWSLambdaSQSQueueExecutionRole managed policy is added automatically (because the event SQSQueueEvent configuration is present)
         - ElasticsearchHttpPostPolicy:
             DomainName: events
 
