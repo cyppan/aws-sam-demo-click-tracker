@@ -1,5 +1,8 @@
 const sdk = require('aws-sdk');
 
+// Another approach is possible using Lambda "destination" feature
+// https://aws.amazon.com/fr/blogs/compute/introducing-aws-lambda-destinations/
+
 const queueUrl = process.env.QUEUE_URL;
 
 // https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/sqs-examples-send-receive-messages.html
