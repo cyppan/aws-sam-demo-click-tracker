@@ -63,5 +63,10 @@ async function bulkPostToES(docs) {
 exports.handler = async function (event) {
   console.log(JSON.stringify(event, null, 2));
   const events = event.Records.map(record => JSON.parse(record.body));
-  return await bulkPostToES(events);
+  const esResp = await bulkPostToES(events);
+  console.log(esResp);
+  return {
+    status: 200,
+    body: "ok"
+  }
 };

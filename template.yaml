@@ -9,13 +9,13 @@ Globals:
 
 Resources:
 
-  S3Bucket:
-    Type: 'AWS::S3::Bucket'
-    Properties:
-      AccessControl: PublicRead
-      BucketName: cyppan-my-click-website
-      WebsiteConfiguration:
-        IndexDocument: index.html
+  # S3Bucket:
+  #   Type: 'AWS::S3::Bucket'
+  #   Properties:
+  #     AccessControl: PublicRead
+  #     BucketName: cyppan-my-click-website
+  #     WebsiteConfiguration:
+  #       IndexDocument: index.html
 
   TrackerFunction:
     Type: AWS::Serverless::Function # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -63,11 +63,11 @@ Resources:
             DomainName: events
 
 Outputs:
-  WebsiteURL: # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#aws-properties-s3-bucket--examples
-    Value: !GetAtt
-      - S3Bucket
-      - WebsiteURL
-    Description: URL for website hosted on S3
+  # WebsiteURL: # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#aws-properties-s3-bucket--examples
+  #   Value: !GetAtt
+  #     - S3Bucket
+  #     - WebsiteURL
+  #   Description: URL for website hosted on S3
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api

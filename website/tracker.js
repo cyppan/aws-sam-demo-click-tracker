@@ -1,9 +1,10 @@
-const trackerUrl = 'https://7nltpslfvl.execute-api.eu-west-1.amazonaws.com/track';
+const trackerUrl = 'TODO';
+const user = 'TODO';
 
-function doTrack(buttonEl) {
+function doTrack(buttonId) {
   const event = {
-    user: 'Cyprien',
-    buttonId: buttonEl.id,
+    user,
+    buttonId,
     documentDomain: document.domain,
     documentPath: document.location.pathname,
     documentCharset: document.charset,
@@ -30,7 +31,7 @@ function doTrack(buttonEl) {
 
 function attachTracker(buttonEl) {
   buttonEl.onclick = (e) => {
-    doTrack(buttonEl);
+    doTrack(buttonEl.id);
   }
 }
 
